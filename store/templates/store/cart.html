@@ -1,0 +1,148 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Your Artisanal Crate • Heritage Brew{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.5rem;">
+  <div class="section-head" style="text-align: left; margin-bottom: 2.5rem;">
+    <span class="section-eyebrow" style="text-align: left;">Order Preparation</span>
+    <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem;">Your Cellar Crate</h1>
+    <p style="color: var(--text-secondary);">Review your selected craft sodas before dispatching.</p>
+  </div>
+
+  {% if cart %}
+    <!-- Free Shipping Progress Indicator -->
+    <div class="shipping-bar-wrap">
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.92rem;">
+        <div>
+          <i class="fa-solid fa-truck-fast" style="color: var(--brass); margin-right: 0.5rem;"></i>
+          {% if free_shipping_needed > 0 %}
+            <span>Add <strong style="color: var(--brass);">${{ free_shipping_needed }}</strong> more to unlock <strong>Complimentary Shipping</strong>!</span>
+          {% else %}
+            <span style="color: #5bb381; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Congratulations! Your crate qualifies for Complimentary Shipping!</span>
+          {% endif %}
+        </div>
+        <span style="font-weight: 600; color: var(--text-primary);">{{ shipping_progress }}%</span>
+      </div>
+      <div class="shipping-progress">
+        <div class="shipping-progress-fill" style="width: {{ shipping_progress }}%;"></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start;">
+      <!-- Left: Itemized Cart Table -->
+      <div class="cart-table-wrap">
+        <table class="cart-table" aria-label="Shopping Crate Items">
+          <thead>
+            <tr>
+              <th>Craft Soda</th>
+              <th>Crate Pack</th>
+              <th>Unit Price</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart %}
+              <tr>
+                <td>
+                  <div class="cart-item-col">
+                    <div class="cart-item-thumb">
+                      <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                    </div>
+                    <div>
+                      <strong style="display: block; font-size: 1.05rem; color: #fff;">{{ item.name }}</strong>
+                      <span style="font-size: 0.8rem; color: var(--text-muted);">Batch Bottled</span>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size: 0.9rem; color: var(--brass); font-weight: 500;">
+                  {{ item.pack_label }}
+                </td>
+                <td style="font-family: var(--font-display); font-size: 1.1rem; color: var(--text-primary);">
+                  ${{ item.price|floatformat:2 }}
+                </td>
+                <td>
+                  <form action="{% url 'store:cart_update' %}" method="POST" style="display: flex; align-items: center; gap: 0.5rem;">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_key" value="{{ item.key }}">
+                    <div class="quantity-control" style="width: 110px;">
+                      <button type="button" class="qty-btn qty-minus" onclick="const i=this.nextElementSibling; if(i.value>1){i.value--; this.form.submit();}">-</button>
+                      <input type="number" name="quantity" class="qty-input" value="{{ item.quantity }}" min="1" max="99" onchange="this.form.submit()">
+                      <button type="button" class="qty-btn qty-plus" onclick="const i=this.previousElementSibling; i.value++; this.form.submit();">+</button>
+                    </div>
+                  </form>
+                </td>
+                <td style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; font-weight: 700;">
+                  ${{ item.item_total|floatformat:2 }}
+                </td>
+                <td>
+                  <a href="{% url 'store:cart_remove' item.key %}" style="color: var(--text-muted); font-size: 1.1rem;" title="Remove from crate">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right: Summary & Checkout CTA -->
+      <div class="cart-summary-card">
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.5rem; color: var(--brass);">
+          Crate Summary
+        </h3>
+
+        <div class="summary-row">
+          <span>Items Subtotal</span>
+          <span style="font-family: var(--font-display); font-weight: 600;">${{ subtotal|floatformat:2 }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Cellar Freight</span>
+          <span style="font-family: var(--font-display); font-weight: 600;">
+            {% if shipping == 0 %}
+              <span style="color: #5bb381;">FREE</span>
+            {% else %}
+              ${{ shipping|floatformat:2 }}
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="summary-row total-row">
+          <span>Estimated Total</span>
+          <span class="text-amber">${{ total|floatformat:2 }}</span>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+          <a href="{% url 'store:checkout' %}" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-lock"></i>
+            <span>Proceed to Dispatch</span>
+          </a>
+          <a href="{% url 'store:shop' %}" class="btn btn-outline btn-block" style="text-align: center;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Continue Curating</span>
+          </a>
+        </div>
+
+        <div style="margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+          <i class="fa-solid fa-shield-halved" style="color: var(--brass);"></i> Guaranteed pristine chilled condition on delivery.
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 6rem 1rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+      <i class="fa-solid fa-wine-bottle" style="font-size: 3.5rem; color: var(--amber-primary); margin-bottom: 1.5rem;"></i>
+      <h2 style="font-size: 2.2rem; margin-bottom: 0.75rem;">Your Crate is Currently Empty</h2>
+      <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 2.5rem; font-size: 1.05rem;">
+        Discover our cold-bottled artisanal sodas and build your personalized tasting crate.
+      </p>
+      <a href="{% url 'store:shop' %}" class="btn btn-primary">
+        <i class="fa-solid fa-compass"></i> Explore The Cellar
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Our Heritage & Craft Philosophy • Heritage Brew{% endblock %}
+{% block meta_description %}Learn about our copper-kettle brewing philosophy, charred barrel infusions, and why Heritage Brew makes the most sophisticated artisanal sodas.{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4.5rem 1.5rem;">
+  <div class="section-head">
+    <span class="section-eyebrow">The Brewery Chronology</span>
+    <h1 style="font-size: 3.2rem; margin-bottom: 0.75rem;">A Passion for Uncompromising Craft</h1>
+    <p class="section-desc">
+      How we turned back the clock to rescue the lost apothecary tradition of hand-crafted sparkling sodas.
+    </p>
+  </div>
+
+  <!-- Hero Story Visual -->
+  <div style="border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 5rem; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-lg); max-height: 480px;">
+    <img src="{% static 'store/images/hero_bottles.jpg' %}" alt="Heritage Brew Cellar Collection" style="width: 100%; height: 100%; object-fit: cover;">
+  </div>
+
+  <!-- 3 Pillars Grid -->
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-bottom: 5rem;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2.5rem 2rem;">
+      <div class="trust-card-icon" style="margin-bottom: 1.5rem; width: 56px; height: 56px; font-size: 1.5rem;">
+        <i class="fa-solid fa-tree"></i>
+      </div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.75rem; color: #fff;">Charred Cask Aging</h3>
+      <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+        We steep our base elixirs with toasted French and American oak wood, delivering complex vanilla, toffee, and toasted campfire undertones rarely found outside barrel-aged spirits.
+      </p>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2.5rem 2rem;">
+      <div class="trust-card-icon" style="margin-bottom: 1.5rem; width: 56px; height: 56px; font-size: 1.5rem;">
+        <i class="fa-solid fa-lemon"></i>
+      </div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.75rem; color: #fff;">Whole Culinary Fruit</h3>
+      <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+        No artificial flavoring 'essences'. We cold-press whole Sicilian blood oranges, simmer organic ginger roots, and steam fresh lemongrass stalks directly in our kettles.
+      </p>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2.5rem 2rem;">
+      <div class="trust-card-icon" style="margin-bottom: 1.5rem; width: 56px; height: 56px; font-size: 1.5rem;">
+        <i class="fa-solid fa-wine-glass"></i>
+      </div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.75rem; color: #fff;">Champagne Carbonation</h3>
+      <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+        Mass-market sodas use harsh, sharp carbonation to mask flat synthetic flavors. Our slow-dissolved micro-effervescence delivers silky, persistent bubbles that dance lightly on the palate.
+      </p>
+    </div>
+  </div>
+
+  <!-- Brewmaster Letter -->
+  <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 3.5rem; max-width: 820px; margin: 0 auto; text-align: center;">
+    <span class="section-eyebrow">A Note from the Founder</span>
+    <h2 style="font-size: 2.2rem; margin-bottom: 1.5rem; color: #fff;">"Real Soda Deserves A Seat At The Fine Dining Table."</h2>
+    <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; font-style: italic;">
+      "For decades, consumers had two choices: neon chemical sodas laden with high-fructose corn syrup, or bland sparkling waters. We founded Heritage Brew to offer something profound: an artisanal soft drink crafted with the reverence of fine wine or craft beer, yet entirely non-alcoholic and pure."
+    </p>
+    <strong style="display: block; font-family: var(--font-display); font-size: 1.15rem; color: var(--brass);">Arthur Sterling</strong>
+    <span style="font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase;">Master Cellar Brewer, Heritage Brew Co.</span>
+  </div>
+</div>
+{% endblock %}

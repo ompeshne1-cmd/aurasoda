@@ -1,0 +1,286 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Heritage Brew • Artisanal Craft Sodas & Botanical Elixirs{% endblock %}
+
+{% block content %}
+<!-- ==========================================================================
+     HERO SECTION
+     ========================================================================== -->
+<section class="hero-section" id="hero-banner">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left Content -->
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span>Micro-Batch Artisanal Sodas</span>
+        </div>
+        <h1 class="hero-title">
+          Timeless Craft Sodas Brewed with <span>Pure Botanical Soul</span>
+        </h1>
+        <p class="hero-lead">
+          We resurrect the golden era of soda craftsmanship. Copper-kettle brewed with whole cold-pressed citrus, charred French oak staves, and Madagascar bourbon vanilla. Never artificial syrups, forever extraordinary.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="{% url 'store:shop' %}" class="btn btn-primary" id="hero-shop-cta">
+            <i class="fa-solid fa-bottle-droplet"></i>
+            <span>Explore The Cellar</span>
+          </a>
+          <a href="{% url 'store:about' %}" class="btn btn-outline" id="hero-story-cta">
+            <span>Our Heritage</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <h4>100%</h4>
+            <p>Pure Cane Sugar</p>
+          </div>
+          <div class="hero-stat-item">
+            <h4>0g</h4>
+            <p>Corn Syrup / Synthetics</p>
+          </div>
+          <div class="hero-stat-item">
+            <h4>4.9★</h4>
+            <p>Sommelier Rating</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Visual -->
+      <div class="hero-visual">
+        <div class="hero-img-wrap">
+          <img src="{% static 'store/images/hero_bottles.jpg' %}" alt="Heritage Craft Sodas Trio - Ruby Gloom, The Cinder, Golden Ginger" loading="eager">
+        </div>
+        <div class="hero-floating-badge">
+          <div class="floating-icon">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <strong style="display: block; font-family: var(--font-serif); font-size: 1.05rem; color: #fff;">Gold Medal Winner</strong>
+            <span style="font-size: 0.78rem; color: var(--brass);">2026 World Craft Beverage Guild</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     TRUST & CRAFTSMANSHIP PILLARS
+     ========================================================================== -->
+<section class="trust-strip" aria-label="Craft Standards">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <i class="fa-solid fa-fire-burner"></i>
+        </div>
+        <div>
+          <h5>Copper Kettle Brewed</h5>
+          <p>Slow simmering releases delicate botanical aromatics.</p>
+        </div>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <i class="fa-solid fa-seedling"></i>
+        </div>
+        <div>
+          <h5>Real Botanicals</h5>
+          <p>Whole Madagascar vanilla, fresh rosemary & Hawaiian ginger.</p>
+        </div>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <i class="fa-solid fa-shield-heart"></i>
+        </div>
+        <div>
+          <h5>Pure Cane & Honey</h5>
+          <p>Zero high fructose corn syrup or artificial sweeteners.</p>
+        </div>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <div>
+          <h5>Complimentary Shipping</h5>
+          <p>Delivered direct to your door on crates over $40.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     FEATURED SODA COLLECTION (THE VAULT)
+     ========================================================================== -->
+<section class="container" style="padding: 5.5rem 1.5rem;" id="featured-collection">
+  <div class="section-head">
+    <span class="section-eyebrow">Curator's Selection</span>
+    <h2 class="section-title">The Cellar's Flagship Sodas</h2>
+    <p class="section-desc">
+      Each recipe is batch-numbered and crafted with obsessive precision. Served in chilled heavyweight glass bottles.
+    </p>
+  </div>
+
+  <div class="products-grid">
+    {% for product in featured_products %}
+      <article class="product-card">
+        <div class="product-thumb-wrap">
+          <a href="{{ product.get_absolute_url }}">
+            <img src="{{ product.get_image_url }}" alt="{{ product.name }}" loading="lazy">
+          </a>
+          <div class="product-badge-overlay">
+            {% if product.is_bestseller %}
+              <span class="badge-craft badge-bestseller"><i class="fa-solid fa-star"></i> Bestseller</span>
+            {% endif %}
+            <span class="badge-craft">{{ product.category.badge|default:product.category.name }}</span>
+          </div>
+        </div>
+
+        <div class="product-body">
+          <span class="product-category-meta">{{ product.category.name }}</span>
+          <h3 class="product-name">
+            <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+          </h3>
+          <p class="product-tagline">{{ product.tagline }}</p>
+
+          <div class="tasting-pills">
+            {% for note in product.tasting_notes_list %}
+              <span class="tasting-pill">{{ note }}</span>
+            {% endfor %}
+          </div>
+
+          <div class="product-footer">
+            <div class="product-price">
+              ${{ product.price }}
+              <span>/ 355ml</span>
+            </div>
+
+            <button class="quick-add-btn ajax-add-btn" data-product-id="{{ product.id }}" title="Quick Add Single Bottle" aria-label="Add {{ product.name }} to crate">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+
+  <div style="text-align: center; margin-top: 3.5rem;">
+    <a href="{% url 'store:shop' %}" class="btn btn-outline">
+      <span>View All Cellar Releases</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     BREWERY STORY & CRAFT PHILOSOPHY
+     ========================================================================== -->
+<section class="story-section" id="story-block">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-image-mosaic">
+        <div class="mosaic-main">
+          <img src="{% static 'store/images/hero_bottles.jpg' %}" alt="Craft Brewing Workshop" loading="lazy">
+        </div>
+      </div>
+
+      <div class="story-content">
+        <span class="section-eyebrow" style="text-align: left;">The Heritage Philosophy</span>
+        <h2>Why Settle For Chemical Sodas When You Can Drink Art?</h2>
+        <p>
+          In the 1880s, soda brewing was an apothecary’s culinary devotion—herbal tinctures steeped over low flames, rare spices ground by hand, and whole fruits squeezed at peak harvest.
+        </p>
+        <p>
+          At <strong>Heritage Brew</strong>, we rejected the modern shortcut of neon artificial dyes and corn syrup syrups. We slow-brew in small copper kettles, marry our elixirs with charred French oak staves, and seal every bottle under velvety champagne effervescence.
+        </p>
+
+        <div class="story-features">
+          <div class="story-feature-item">
+            <h5>Charred Oak Aging</h5>
+            <p>Infuses rich wood tannins, butterscotch, and warm campfire vanilla.</p>
+          </div>
+          <div class="story-feature-item">
+            <h5>Cold-Pressed Citrus</h5>
+            <p>Real Sicilian blood oranges and California Meyer lemons.</p>
+          </div>
+          <div class="story-feature-item">
+            <h5>Mountain Spring Water</h5>
+            <p>Pure, mineral-balanced spring effervescence with microscopic bubbles.</p>
+          </div>
+          <div class="story-feature-item">
+            <h5>Small Batch Tested</h5>
+            <p>Every single batch is certified by our Master Cellar Sommelier.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     VERIFIED REVIEWS / TASTING JOURNAL
+     ========================================================================== -->
+<section class="reviews-section" id="tasting-reviews">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-eyebrow">Tasting Journal</span>
+      <h2 class="section-title">Acclaim From Connoisseurs</h2>
+      <p class="section-desc">
+        Read honest field impressions from sommeliers, culinary chefs, and soda enthusiasts.
+      </p>
+    </div>
+
+    <div class="reviews-grid">
+      {% for review in recent_reviews %}
+        <article class="review-card">
+          <div class="review-stars">
+            {% for i in "12345"|make_list %}
+              {% if forloop.counter <= review.rating %}
+                <i class="fa-solid fa-star"></i>
+              {% else %}
+                <i class="fa-regular fa-star"></i>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <h4 class="review-title">"{{ review.title }}"</h4>
+          <p class="review-quote">"{{ review.comment }}"</p>
+          <div class="review-author-meta">
+            <div>
+              <span class="author-name">{{ review.author_name }}</span>
+              <span style="display: block; font-size: 0.75rem; color: var(--brass);">on {{ review.product.name }}</span>
+            </div>
+            {% if review.is_verified %}
+              <span class="author-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     INVITATION TO THE CRAFT GUILD
+     ========================================================================== -->
+<section class="container" style="padding: 5rem 1.5rem;">
+  <div style="background: radial-gradient(circle at center, #2e2015 0%, #17130f 100%); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 4rem 2rem; text-align: center; position: relative; overflow: hidden; box-shadow: var(--shadow-lg);">
+    <span class="section-eyebrow">Private Cellar Release</span>
+    <h2 style="font-size: 2.8rem; margin-bottom: 1rem; color: #fff;">Curate Your Own Heritage Flight</h2>
+    <p style="color: var(--text-secondary); max-width: 580px; margin: 0 auto 2.5rem; font-size: 1.1rem;">
+      Whether for celebratory dinner pairings, alcohol-free craft refreshment, or everyday luxury, order by the bottle or build a mixed collector's case.
+    </p>
+    <a href="{% url 'store:shop' %}" class="btn btn-primary" style="font-size: 1rem; padding: 1rem 2.5rem;">
+      <i class="fa-solid fa-wine-bottle"></i>
+      <span>Build Your Crate</span>
+    </a>
+  </div>
+</section>
+{% endblock %}

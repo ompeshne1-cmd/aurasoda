@@ -1,0 +1,130 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Cellar Dispatch Checkout • Heritage Brew{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.5rem;">
+  <div class="section-head" style="text-align: left; margin-bottom: 2.5rem;">
+    <span class="section-eyebrow" style="text-align: left;">Secure Dispatch</span>
+    <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem;">Complete Your Order</h1>
+    <p style="color: var(--text-secondary);">Provide destination details for your chilled craft soda delivery.</p>
+  </div>
+
+  <form method="POST" action="{% url 'store:checkout' %}" id="checkout-form">
+    {% csrf_token %}
+
+    <div style="display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 3.5rem; align-items: start;">
+      <!-- Left: Shipping & Payment Details -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2.5rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 1.5rem; color: #fff; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+          1. Destination & Recipient
+        </h3>
+
+        <div class="form-group">
+          <label class="form-label" for="id_full_name">Full Recipient Name</label>
+          {{ form.full_name }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="id_email">Email for Dispatch Receipt</label>
+            {{ form.email }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="id_phone">Phone Number</label>
+            {{ form.phone }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_address">Street Address, Apt / Suite</label>
+          {{ form.address }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 1.25rem;">
+          <div class="form-group">
+            <label class="form-label" for="id_city">City</label>
+            {{ form.city }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="id_state">State / Province</label>
+            {{ form.state }}
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="id_postal_code">Postal Code</label>
+            {{ form.postal_code }}
+          </div>
+        </div>
+
+        <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin: 2rem 0 1.5rem; color: #fff; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+          2. Settlement Method
+        </h3>
+
+        <div class="form-group">
+          <label class="form-label" for="id_payment_method">Preferred Payment Gateway</label>
+          {{ form.payment_method }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_notes">Special Cellar Delivery Instructions (Optional)</label>
+          {{ form.notes }}
+        </div>
+      </div>
+
+      <!-- Right: Order Review & Submit -->
+      <div class="cart-summary-card">
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.5rem; color: var(--brass);">
+          Order Breakdown
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; max-height: 360px; overflow-y: auto; padding-right: 0.5rem;">
+          {% for item in cart %}
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover;">
+                <div>
+                  <strong style="display: block; font-size: 0.95rem; color: #fff;">{{ item.name }}</strong>
+                  <span style="font-size: 0.78rem; color: var(--brass);">{{ item.quantity }}x {{ item.pack_label }}</span>
+                </div>
+              </div>
+              <span style="font-family: var(--font-display); font-weight: 700; color: #fff;">${{ item.item_total|floatformat:2 }}</span>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span style="font-family: var(--font-display); font-weight: 600;">${{ subtotal|floatformat:2 }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Freight Delivery</span>
+          <span style="font-family: var(--font-display); font-weight: 600;">
+            {% if shipping == 0 %}
+              <span style="color: #5bb381;">FREE</span>
+            {% else %}
+              ${{ shipping|floatformat:2 }}
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="summary-row total-row">
+          <span>Grand Total</span>
+          <span class="text-amber">${{ total|floatformat:2 }}</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 2rem; font-size: 1rem; padding: 1.1rem;">
+          <i class="fa-solid fa-lock"></i>
+          <span>Authorize & Confirm Dispatch</span>
+        </button>
+
+        <div style="margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+          <i class="fa-solid fa-shield-check" style="color: var(--brass);"></i>
+          <span>Encrypted 256-Bit Secure Transaction</span>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} • Heritage Brew Artisanal Sodas{% endblock %}
+{% block meta_description %}{{ product.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<div class="container product-detail-section">
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" style="margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-muted);">
+    <a href="{% url 'store:index' %}">Home</a> &nbsp;/&nbsp;
+    <a href="{% url 'store:shop' %}">The Vault</a> &nbsp;/&nbsp;
+    <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a> &nbsp;/&nbsp;
+    <span style="color: var(--amber-primary);">{{ product.name }}</span>
+  </nav>
+
+  <div class="detail-layout">
+    <!-- Left: High-Res Gallery -->
+    <div class="detail-gallery">
+      <div class="detail-main-image">
+        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" id="main-product-img">
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
+        <div class="badge-craft" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-droplet"></i> {{ product.volume_ml }}ml Chilled Bottle
+        </div>
+        <div class="badge-craft" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-sparkles"></i> {{ product.carbonation_level }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Product Information & Purchase Controls -->
+    <div class="detail-info">
+      <span class="badge-craft detail-category-badge">{{ product.category.name }}</span>
+      <h1 class="detail-title">{{ product.name }}</h1>
+      <p class="detail-tagline">{{ product.tagline }}</p>
+
+      <!-- Rating & Reviews Anchor -->
+      <div class="detail-rating-row">
+        <div style="color: var(--brass); font-size: 1.05rem;">
+          {% for i in "12345"|make_list %}
+            <i class="fa-solid fa-star"></i>
+          {% endfor %}
+        </div>
+        <span style="font-size: 0.9rem; font-weight: 600;">{{ product.average_rating }} / 5.0</span>
+        <span style="color: var(--text-muted); font-size: 0.85rem;">({{ product.review_count }} Sommelier review{{ product.review_count|pluralize }})</span>
+      </div>
+
+      <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem;">
+        {{ product.description }}
+      </p>
+
+      <!-- Tasting Notes Tags -->
+      <div style="margin-bottom: 2rem;">
+        <span class="pack-label-title"><i class="fa-solid fa-compass-drafting"></i> Tasting Palette</span>
+        <div class="tasting-pills" style="margin-top: 0.5rem;">
+          {% for note in product.tasting_notes_list %}
+            <span class="tasting-pill" style="font-size: 0.82rem; padding: 0.35rem 0.85rem; border-color: var(--border-subtle); background: var(--amber-subtle); color: var(--brass);">
+              {{ note }}
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Pack Size Selection (Interactive) -->
+      <div class="pack-selector-group">
+        <span class="pack-label-title">Select Crate Size</span>
+        <div class="pack-options-grid">
+          <div class="pack-option-card active" data-pack="single" data-price="{{ product.price }}" data-label="Single Bottle (355ml)">
+            <span class="pack-name">Single Bottle</span>
+            <span class="pack-price">${{ product.price }}</span>
+            <span style="display: block; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">Standard Sample</span>
+          </div>
+
+          <div class="pack-option-card" data-pack="four" data-price="{{ product.price_four_pack }}" data-label="4-Pack Craft Box">
+            <span class="pack-name">4-Pack Box</span>
+            <span class="pack-price">${{ product.price_four_pack }}</span>
+            <span style="display: block; font-size: 0.72rem; color: #5bb381; margin-top: 0.25rem;">Save ~7%</span>
+          </div>
+
+          <div class="pack-option-card" data-pack="case" data-price="{{ product.price_case }}" data-label="12-Pack Collector's Case">
+            <span class="pack-name">12-Pack Case</span>
+            <span class="pack-price">${{ product.price_case }}</span>
+            <span style="display: block; font-size: 0.72rem; color: #5bb381; margin-top: 0.25rem;">Best Value (Save 15%)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add to Crate Box -->
+      <form action="{% url 'store:cart_add' product.id %}" method="POST" id="add-to-crate-form" class="detail-pricing-box">
+        {% csrf_token %}
+        <input type="hidden" name="pack" id="selected-pack-input" value="single">
+
+        <div class="live-price-display">
+          <span class="current-price">${{ product.price }}</span>
+          <span class="price-unit-label">per Single Bottle (355ml)</span>
+        </div>
+
+        <div class="purchase-actions">
+          <div class="quantity-control">
+            <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">-</button>
+            <input type="number" name="quantity" class="qty-input" value="1" min="1" max="50" readonly>
+            <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-add-crate" id="submit-add-crate">
+            <i class="fa-solid fa-wine-bottle"></i>
+            <span>Add to Crate</span>
+          </button>
+        </div>
+
+        <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-truck-ramp-box" style="color: var(--brass);"></i>
+          <span>In Stock • Dispatched in custom protective temperature-stable packaging</span>
+        </div>
+      </form>
+
+      <!-- Detailed Information Tabs -->
+      <div style="margin-top: 3rem;">
+        <div class="detail-tabs-nav" role="tablist">
+          <button type="button" class="tab-btn active" data-target="tab-ingredients">Botanicals & Ingredients</button>
+          <button type="button" class="tab-btn" data-target="tab-pairings">Sommelier Pairings</button>
+          <button type="button" class="tab-btn" data-target="tab-brewing">Brewing Method</button>
+        </div>
+
+        <div class="tab-content" id="tab-ingredients" class="tab-panel">
+          <p><strong>Ingredients:</strong> {{ product.ingredients }}</p>
+          <p style="margin-top: 0.75rem;"><strong>Natural Sweetener:</strong> {{ product.sugar_content }}</p>
+        </div>
+
+        <div class="tab-content" id="tab-pairings" class="tab-panel" style="display: none;">
+          <p><strong>Recommended Gastronomic Pairings:</strong></p>
+          <p>{{ product.pairing_notes|default:"A versatile accompaniment to wood-fired artisan pizza, cured charcuterie boards, and gourmet burgers." }}</p>
+        </div>
+
+        <div class="tab-content" id="tab-brewing" class="tab-panel" style="display: none;">
+          <p>Slow steeped in authentic copper brew kettles to draw maximum botanical depth without harshness. Cooled gradually and infused with mineral spring carbonation for velvety effervescence.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verified Tasting Reviews Section -->
+  <section style="margin-top: 6rem; border-top: 1px solid var(--border-light); padding-top: 4rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <span class="section-eyebrow" style="text-align: left;">Customer Tasting Log</span>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Sommelier & Customer Reviews</h2>
+        <p style="color: var(--text-secondary);">Honest tasting notes from our craft community.</p>
+      </div>
+
+      <a href="#leave-review-card" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-pen-nib"></i> Write a Tasting Note
+      </a>
+    </div>
+
+    <div class="reviews-grid" style="margin-bottom: 4rem;">
+      {% for review in reviews %}
+        <article class="review-card">
+          <div class="review-stars">
+            {% for i in "12345"|make_list %}
+              {% if forloop.counter <= review.rating %}
+                <i class="fa-solid fa-star"></i>
+              {% else %}
+                <i class="fa-regular fa-star"></i>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <h4 class="review-title">"{{ review.title }}"</h4>
+          <p class="review-quote">"{{ review.comment }}"</p>
+          <div class="review-author-meta">
+            <span class="author-name">{{ review.author_name }}</span>
+            {% if review.is_verified %}
+              <span class="author-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <p style="color: var(--text-muted); font-style: italic;">No reviews yet. Be the first to taste and share your review!</p>
+      {% endfor %}
+    </div>
+
+    <!-- Review Form Card -->
+    <div id="leave-review-card" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 2.5rem; max-width: 680px; margin: 0 auto;">
+      <h3 style="font-size: 1.6rem; margin-bottom: 0.5rem; color: #fff;">Submit Your Tasting Impressions</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Help fellow connoisseurs discover the nuances of this small-batch brew.
+      </p>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_author_name">Your Name</label>
+          {{ review_form.author_name }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_rating">Your Rating (1 to 5 Stars)</label>
+          {{ review_form.rating }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_title">Headline / Summary</label>
+          {{ review_form.title }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_comment">Tasting Notes & Impressions</label>
+          {{ review_form.comment }}
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+          <i class="fa-solid fa-check"></i> Publish Review
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Related Craft Sodas -->
+  {% if related_products %}
+    <section style="margin-top: 6rem; border-top: 1px solid var(--border-light); padding-top: 4rem;">
+      <div class="section-head" style="text-align: left; margin-bottom: 2.5rem;">
+        <span class="section-eyebrow" style="text-align: left;">Complementary Flavors</span>
+        <h2 class="section-title">You May Also Appreciate</h2>
+      </div>
+
+      <div class="products-grid">
+        {% for rel in related_products %}
+          <article class="product-card">
+            <div class="product-thumb-wrap">
+              <a href="{{ rel.get_absolute_url }}">
+                <img src="{{ rel.get_image_url }}" alt="{{ rel.name }}" loading="lazy">
+              </a>
+            </div>
+            <div class="product-body">
+              <span class="product-category-meta">{{ rel.category.name }}</span>
+              <h3 class="product-name">
+                <a href="{{ rel.get_absolute_url }}">{{ rel.name }}</a>
+              </h3>
+              <p class="product-tagline">{{ rel.tagline }}</p>
+              <div class="product-footer">
+                <div class="product-price">${{ rel.price }}</div>
+                <a href="{{ rel.get_absolute_url }}" class="btn btn-outline btn-sm">View Details</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Cellar Dispatch & Inquiries • Heritage Brew{% endblock %}
+{% block meta_description %}Contact Heritage Brew for wholesale inquiries, sommelier tasting appointments, and cellar orders.{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4.5rem 1.5rem;">
+  <div class="section-head">
+    <span class="section-eyebrow">Connect With The Cellar</span>
+    <h1 style="font-size: 3.2rem; margin-bottom: 0.75rem;">Cellar Dispatch & Concierge</h1>
+    <p class="section-desc">
+      Have a question regarding our vintage batches, event catering, or restaurant sommelier wholesale? Send our brewmaster a dispatch.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 4rem; align-items: start; max-width: 1040px; margin: 0 auto;">
+    <!-- Left: Direct Info -->
+    <div>
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 2.5rem; margin-bottom: 2rem;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.4rem; margin-bottom: 1.25rem; color: #fff;">The Micro-Brewery & Vault</h3>
+        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-location-dot" style="color: var(--brass); margin-right: 0.5rem;"></i>
+          442 Copper Still Lane, Barrelhouse District<br>
+          Portland, Oregon 97209
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-envelope" style="color: var(--brass); margin-right: 0.5rem;"></i>
+          cellar@heritagecraftsoda.com
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+          <i class="fa-solid fa-clock" style="color: var(--brass); margin-right: 0.5rem;"></i>
+          Tasting Cellar Hours: Thursday – Sunday, 12:00 PM – 7:00 PM
+        </p>
+      </div>
+
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2rem;">
+        <h4 style="font-family: var(--font-display); font-size: 1rem; color: var(--brass); margin-bottom: 0.5rem; text-transform: uppercase;">
+          Sommelier & Hospitality Inquiries
+        </h4>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">
+          We supply luxury boutique hotels, fine dining establishments, and craft cocktail bars nationwide with custom tap and glass bottle allocations.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right: Working Contact Form -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2.5rem;">
+      <h3 style="font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 0.5rem; color: #fff;">Transmit A Message</h3>
+      <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1.75rem;">
+        Our cellar crew reviews all correspondence daily.
+      </p>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="id_name">Your Name</label>
+          {{ form.name }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_email">Email Address</label>
+          {{ form.email }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_subject">Dispatch Subject</label>
+          {{ form.subject }}
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="id_message">Message Details</label>
+          {{ form.message }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+          <i class="fa-solid fa-paper-plane"></i> Send Cellar Dispatch
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

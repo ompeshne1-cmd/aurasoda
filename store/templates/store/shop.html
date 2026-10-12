@@ -1,0 +1,122 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}The Cellar Vault • Handcrafted Artisanal Sodas{% endblock %}
+{% block meta_description %}Explore our complete collection of heritage craft sodas, oak-aged cream sodas, and botanical fizzes.{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3.5rem 1.5rem;">
+  <!-- Header & Controls -->
+  <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 2.5rem; margin-bottom: 3rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2.5rem;">
+      <div>
+        <span class="section-eyebrow" style="text-align: left;">Artisan Cellar Vault</span>
+        <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem;">
+          {% if current_category %}{{ current_category.name }}{% else %}All Craft Sodas{% endif %}
+        </h1>
+        <p style="color: var(--text-secondary); max-width: 600px;">
+          {% if current_category %}
+            {{ current_category.description }}
+          {% else %}
+            Explore our slow-simmered, small-batch botanical elixirs and barrel-aged heritage sodas.
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- Search & Sort Bar -->
+      <form method="GET" action="{% url 'store:shop' %}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        {% if current_category %}
+          <input type="hidden" name="category" value="{{ current_category.slug }}">
+        {% endif %}
+        <div style="position: relative;">
+          <input type="text" name="q" value="{{ query }}" placeholder="Search by flavor, botanical..." class="form-control" style="width: 240px; padding-left: 2.5rem;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.85rem;"></i>
+        </div>
+
+        <select name="sort" class="form-control" style="width: 180px;" onchange="this.form.submit()">
+          <option value="featured" {% if sort_by == 'featured' %}selected{% endif %}>Featured First</option>
+          <option value="bestseller" {% if sort_by == 'bestseller' %}selected{% endif %}>Bestsellers</option>
+          <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+          <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+          <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Alphabetical</option>
+        </select>
+      </form>
+    </div>
+
+    <!-- Category Pills Filter -->
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+      <a href="{% url 'store:shop' %}" class="btn btn-sm {% if not current_category %}btn-primary{% else %}btn-outline{% endif %}">
+        All Cellar Sodas
+      </a>
+      {% for cat in categories %}
+        <a href="{{ cat.get_absolute_url }}" class="btn btn-sm {% if current_category.slug == cat.slug %}btn-primary{% else %}btn-outline{% endif %}">
+          {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Product Count / Filter Active Notice -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+    <span>Showing <strong>{{ product_count }}</strong> handcrafted soda{{ product_count|pluralize }}</span>
+    {% if query %}
+      <span>Filtering for: "<strong style="color: var(--amber-primary);">{{ query }}</strong>" (<a href="{% url 'store:shop' %}" style="text-decoration: underline;">Clear search</a>)</span>
+    {% endif %}
+  </div>
+
+  <!-- Products Grid -->
+  {% if products %}
+    <div class="products-grid">
+      {% for product in products %}
+        <article class="product-card">
+          <div class="product-thumb-wrap">
+            <a href="{{ product.get_absolute_url }}">
+              <img src="{{ product.get_image_url }}" alt="{{ product.name }}" loading="lazy">
+            </a>
+            <div class="product-badge-overlay">
+              {% if product.is_bestseller %}
+                <span class="badge-craft badge-bestseller"><i class="fa-solid fa-star"></i> Bestseller</span>
+              {% endif %}
+              <span class="badge-craft">{{ product.category.badge|default:product.category.name }}</span>
+            </div>
+          </div>
+
+          <div class="product-body">
+            <span class="product-category-meta">{{ product.category.name }}</span>
+            <h3 class="product-name">
+              <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+            </h3>
+            <p class="product-tagline">{{ product.tagline }}</p>
+
+            <div class="tasting-pills">
+              {% for note in product.tasting_notes_list %}
+                <span class="tasting-pill">{{ note }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="product-footer">
+              <div class="product-price">
+                ${{ product.price }}
+                <span>/ 355ml</span>
+              </div>
+
+              <button class="quick-add-btn ajax-add-btn" data-product-id="{{ product.id }}" title="Quick Add Single Bottle" aria-label="Add {{ product.name }} to crate">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 5rem 1rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+      <i class="fa-solid fa-magnifying-glass" style="font-size: 3rem; color: var(--amber-primary); margin-bottom: 1.5rem;"></i>
+      <h3 style="font-size: 1.75rem; margin-bottom: 0.75rem;">No Craft Sodas Match Your Criteria</h3>
+      <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 2rem;">
+        We could not find any cellar sodas matching "{{ query }}". Try searching for vanilla, ginger, orange, or barrel oak.
+      </p>
+      <a href="{% url 'store:shop' %}" class="btn btn-primary">Reset Filters</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

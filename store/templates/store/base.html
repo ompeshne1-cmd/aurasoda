@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}Heritage Brew - Handcrafted artisanal craft sodas, oak-barrel-matured elixirs, and sparkling botanical refreshments brewed with real cane sugar.{% endblock %}">
+  <title>{% block title %}Heritage Brew • Artisanal Craft Sodas & Botanical Elixirs{% endblock %}</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Core Design System CSS -->
+  <link rel="stylesheet" href="{% static 'store/css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Announcement Ticker -->
+  <aside class="top-ticker" aria-label="Special Announcement">
+    <span><i class="fa-solid fa-sparkles"></i> Complimentary Crate Delivery On Orders Over $40 • Handcrafted In Micro-Batches • 100% Pure Cane Sugar</span>
+  </aside>
+
+  <!-- Navigation Header -->
+  <header class="header-main" id="site-header">
+    <div class="nav-container">
+      <a href="{% url 'store:index' %}" class="brand-logo" id="brand-logo-link">
+        <div class="brand-seal">H</div>
+        <div>
+          <span class="brand-name">HERITAGE BREW</span>
+          <span class="brand-tagline">Artisanal Craft Sodas • Est. 2026</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links" id="main-nav-links">
+          <li><a href="{% url 'store:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a></li>
+          <li><a href="{% url 'store:shop' %}" class="nav-link {% if request.resolver_match.url_name == 'shop' %}active{% endif %}">The Vault (Shop)</a></li>
+          <li><a href="{% url 'store:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">Our Heritage</a></li>
+          <li><a href="{% url 'store:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Cellar Dispatch</a></li>
+        </ul>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Search Trigger / Direct Link to Shop Search -->
+        <a href="{% url 'store:shop' %}" class="nav-action-btn" title="Search Sodas" id="search-nav-btn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </a>
+
+        <!-- Crate / Shopping Cart Button -->
+        <a href="{% url 'store:cart_detail' %}" class="crate-btn" id="crate-nav-btn" title="View Shopping Crate">
+          <i class="fa-solid fa-wine-bottle"></i>
+          <span>Crate</span>
+          <span class="crate-badge" id="crate-counter-badge">{{ cart_count }}</span>
+        </a>
+
+        <!-- Mobile Navigation Toggle -->
+        <button class="mobile-toggle" aria-label="Toggle navigation" id="mobile-menu-toggle">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Messages / Toast Feedback -->
+  {% if messages %}
+    <div class="toast-container" id="django-messages-toast">
+      {% for message in messages %}
+        <div class="toast-item {{ message.tags }}">
+          <span>{{ message }}</span>
+          <button class="toast-close" type="button" aria-label="Close notification">✕</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content Block -->
+  <main id="main-content">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Master Luxury Footer -->
+  <footer class="footer-main" id="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Philosophy Column -->
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 1.25rem;">
+            <div class="brand-seal">H</div>
+            <div>
+              <span class="brand-name">HERITAGE BREW</span>
+              <span class="brand-tagline">Small-Batch Micro-Brewery</span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Crafted for discerning palates. We resurrect time-honored soda brewing traditions using copper kettles, toasted oak barrels, cold-pressed whole fruit, and fragrant culinary botanicals. Never artificial, forever authentic.
+          </p>
+          <div style="display: flex; gap: 1rem; color: var(--brass); font-size: 1.1rem;">
+            <a href="#" title="Instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" title="X / Twitter" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" title="Facebook" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+          </div>
+        </div>
+
+        <!-- Collections Column -->
+        <div class="footer-col">
+          <h5>The Cellar Vault</h5>
+          <ul class="footer-links">
+            <li><a href="{% url 'store:shop' %}">All Craft Sodas</a></li>
+            {% for cat in all_categories %}
+              <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Cellar & Company Column -->
+        <div class="footer-col">
+          <h5>Our House</h5>
+          <ul class="footer-links">
+            <li><a href="{% url 'store:about' %}">Brewing Philosophy</a></li>
+            <li><a href="{% url 'store:contact' %}">Cellar Dispatch</a></li>
+            <li><a href="{% url 'store:cart_detail' %}">Your Crate</a></li>
+            <li><a href="{% url 'admin:index' %}" target="_blank">Brewmaster Admin</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Subscription Column -->
+        <div class="footer-col">
+          <h5>The Guild Dispatch</h5>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Join our private registry for early access to limited seasonal cask releases and sommelier tasting flights.
+          </p>
+          <form action="{% url 'store:newsletter_subscribe' %}" method="POST" class="newsletter-form-wrap" id="newsletter-footer-form">
+            {% csrf_token %}
+            <input type="email" name="email" class="newsletter-input" placeholder="Your email address..." required aria-label="Email address for newsletter">
+            <button type="submit" class="btn btn-primary btn-sm">Join</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom">
+        <div>
+          <span>© 2026 Heritage Brew Co. All rights reserved. Handcrafted with pride.</span>
+        </div>
+        <div style="display: flex; gap: 1.5rem;">
+          <span>100% Pure Cane Sugar</span>
+          <span>•</span>
+          <span>Zero HFCS</span>
+          <span>•</span>
+          <span>Cold Bottled</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{% static 'store/js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
